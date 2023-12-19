@@ -1,62 +1,54 @@
+#include <stdlib.h>
+#include <stdio.h>
 #include "binary_trees.h"
-
-/**
- * binary_tree_height - Helper to calculate the height of a binary tree.
- *
- * @tree: A pointer to the root node of the tree to calculate the height.
- *
- * Return: The height of the tree.
- */
-size_t binary_tree_height(const binary_tree_t *tree)
+int calculate_depth(const binary_tree_t *node)
 {
-	size_t left_height, right_height;
+	int depth = 0;
 
-	if (tree == NULL)
-		return (0);
+	while (node != NULL)
+	{
+		depth++;
+		node = node->left;
+	}
 
-	left_height = binary_tree_height(tree->left);
-	right_height = binary_tree_height(tree->right);
-
-	return (1 + (left_height > right_height ? left_height : right_height));
+	return (depth);
 }
 
-/**
- * binary_tree_is_full - Helper function to check if a binary tree is full.
- *
- * @tree: A pointer to the root node of the tree to check.
- *
- * Return: 1 if the tree is full, 0 otherwise.
- */
-int binary_tree_is_full(const binary_tree_t *tree)
-{
-	if (tree == NULL)
-		return (1);
-
-	if (tree->left == NULL && tree->right == NULL)
-		return (1);
-
-	if (tree->left != NULL && tree->right != NULL)
-		return (binary_tree_is_full(tree->left) && binary_tree_is_full(tree->right));
-
-	return (0);
-}
-
-/**
- * binary_tree_is_perfect - Checks if a binary tree is perfect.
- *
- * @tree: A pointer to the root node of the tree to check.
- *
- * Return: 1 if the tree is perfect, 0 if @tree is NULL or not perfect.
- */
 int binary_tree_is_perfect(const binary_tree_t *tree)
 {
-	size_t height, size;
-
 	if (tree == NULL)
+	{
 		return (0);
+	}
 
-	height = binary_tree_height(tree);
-	size = binary_tree_size(tree);
+	const binary_tree_t *queue[1024];
+	int front = 0, rear = 0;
 
-	return (binary_tree_is_full(tree) && (size == ((size_t)1 << height) - 1));
+	queue[rear++] = tree;
+	int depth = calculate_depth(tree);
+
+	while (front < rear)
+	{
+		const binary_tree_t *node = queue[front++];
+
+		if (node->left == NULL && node->right == NULL)
+		{
+			if (front != depth)
+			{
+				return (0);
+			}
+		}
+		else if (node->left != NULL && node->right != NULL)
+		{
+			queue[rear++] = node->left;
+			queue[rear++] = node->right;
+		}
+		else
+		{
+			return (0);
+		}
+	}
+
+	return (1);
 }
+
