@@ -24,13 +24,14 @@ int calculate_depth(const binary_tree_t *node)
  */
 int binary_tree_is_perfect(const binary_tree_t *tree)
 {
+	const binary_tree_t *queue[1024];
+	int front = 0, rear = 0;
+	int depth;
+
 	if (tree == NULL)
 		return (0);
 
-	const binary_tree_t *queue[1024];
-	int front = 0, rear = 0;
-	int depth = calculate_depth(tree);
-
+	depth = calculate_depth(tree);
 	queue[rear++] = tree;
 
 	while (front < rear)
